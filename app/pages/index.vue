@@ -1,10 +1,10 @@
 <template>
   <div v-if="!isAuthenticated" class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
     <!-- Your existing landing page content -->
-    <section class="max-w-6xl mx-auto px-4 py-16 text-center">
+    <!-- <section class="max-w-6xl mx-auto px-4 py-16 text-center">
       <h1 class="text-4xl md:text-5xl font-bold text-gray-900 mb-6">
         Connect Brands & Influencers
-      </h1>
+      </h1> -->
       <!-- ... rest of your landing page content -->
       <header class="bg-white shadow-sm border-b border-gray-200">
         <div class="container mx-auto px-4">
@@ -57,6 +57,22 @@
           </div>
         </div>
       </header>
+      <div class="flex items-center space-x-4">
+        <button 
+          @click="showFilters = !showFilters"
+          class="bg-purple-600 text-white px-4 py-2 rounded-lg hover:bg-purple-700 transition-colors flex items-center space-x-2"
+        >
+          <span>🔍</span>
+          <span>Filters</span>
+        </button>
+        <NuxtLink 
+          to="/influencer/campaigns/applications" 
+          class="bg-gray-600 text-white px-4 py-2 rounded-lg hover:bg-gray-700 transition-colors flex items-center space-x-2"
+        >
+          <span>📨</span>
+          <span>My Applications ({{ pendingApplications }})</span>
+        </NuxtLink>
+      </div>
       <div class="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 py-8">
         <!-- Hero Section -->
         <section class="max-w-6xl mx-auto px-4 py-16 text-center">
@@ -163,7 +179,7 @@
           </div>
         </section>
       </div>
-    </section>
+    <!-- </section> -->
   </div>
 
   <!-- Show loading while checking auth -->
@@ -179,6 +195,8 @@
 const authStore = useAuthStore()
 
 const isAuthenticated = computed(() => authStore.isAuthenticated)
+
+const pendingApplications = ref(2)
 
 // Redirect logged-in users to their dashboard
 onMounted(() => {

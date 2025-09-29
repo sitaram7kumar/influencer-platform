@@ -91,6 +91,30 @@
               class="flex items-center space-x-3 p-3 text-gray-700 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors"
             >
               <span>🎯</span>
+              <span>Discover Campaigns</span>
+            </NuxtLink>
+            <NuxtLink 
+              to="/influencer/campaigns/applications" 
+              class="flex items-center space-x-3 p-3 text-gray-700 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors"
+            >
+              <span>📨</span>
+              <span>My Applications</span>
+              <span v-if="pendingApplications > 0" class="bg-orange-500 text-white text-xs rounded-full px-2 py-1 ml-auto">
+                {{ pendingApplications }}
+              </span>
+            </NuxtLink>
+            <NuxtLink 
+              to="/influencer/dashboard" 
+              class="flex items-center space-x-3 p-3 text-gray-700 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors"
+            >
+              <span>📊</span>
+              <span>Dashboard</span>
+            </NuxtLink>
+            <NuxtLink 
+              to="/influencer/campaigns" 
+              class="flex items-center space-x-3 p-3 text-gray-700 hover:bg-purple-50 hover:text-purple-600 rounded-lg transition-colors"
+            >
+              <span>🎯</span>
               <span>Campaigns</span>
             </NuxtLink>
             <NuxtLink 
@@ -177,6 +201,7 @@ const pendingRequests = ref(2)
 const currentBalance = ref(1250)
 const activeCampaigns = ref(4)
 const pendingContent = ref(1)
+const pendingApplications = ref(2)
 
 const userInitials = computed(() => {
   return user.value?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'I'
