@@ -9,5 +9,5 @@
 </template>
 
 <script setup>
-// Import our components
+// We'll add authentication logic here later
 </script>
