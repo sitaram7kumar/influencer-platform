@@ -19,14 +19,41 @@
             <button class="p-2 text-gray-600 hover:text-blue-600">
               <span class="text-lg">🔔</span>
             </button>
-            <div class="relative">
+            <div class="relative group">
               <button class="flex items-center space-x-2 text-gray-700">
                 <div class="w-8 h-8 bg-blue-500 rounded-full flex items-center justify-center text-white font-semibold">
                   {{ userInitials }}
                 </div>
-                <span>{{ user.name }}</span>
+                <span>{{ user?.name }}</span>
                 <span>▼</span>
               </button>
+              
+              <!-- Dropdown Menu -->
+              <div class="absolute right-0 mt-2 w-48 bg-white rounded-lg shadow-lg border border-gray-200 opacity-0 invisible group-hover:opacity-100 group-hover:visible transition-all duration-200 z-50">
+                <div class="p-2">
+                  <div class="px-3 py-2 text-sm text-gray-600 border-b border-gray-100">
+                    Signed in as <strong>{{ user?.email }}</strong>
+                  </div>
+                  <NuxtLink 
+                    to="/brand/profile" 
+                    class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded"
+                  >
+                    👤 Your Profile
+                  </NuxtLink>
+                  <NuxtLink 
+                    to="/brand/settings" 
+                    class="block px-3 py-2 text-sm text-gray-700 hover:bg-gray-50 rounded"
+                  >
+                    ⚙️ Settings
+                  </NuxtLink>
+                  <button 
+                    @click="handleLogout"
+                    class="w-full text-left px-3 py-2 text-sm text-red-600 hover:bg-red-50 rounded mt-1"
+                  >
+                    🚪 Sign Out
+                  </button>
+                </div>
+              </div>
             </div>
           </div>
         </div>
@@ -94,13 +121,21 @@
 </template>
 
 <script setup>
-// Mock user data - will be replaced with real auth later
-const user = ref({
-  name: 'Nike Marketing',
-  email: 'nike@example.com'
+// Add auth protection to brand layout
+definePageMeta({
+  middleware: 'auth',
+  requiredUserType: 'brand'
 })
 
+const { user, logout } = useAuth()
+
 const userInitials = computed(() => {
-  return user.value.name.split(' ').map(n => n[0]).join('').toUpperCase()
+  return user.value?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'
 })
+
+const handleLogout = () => {
+  if (confirm('Are you sure you want to sign out?')) {
+    logout()
+  }
+}
 </script>

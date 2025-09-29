@@ -19,6 +19,25 @@
           </NuxtLink>
         </p>
       </div>
+
+      <!-- User Type Selection -->
+      <div class="grid grid-cols-2 gap-4 mb-6">
+        <button
+          v-for="type in userTypes"
+          :key="type.value"
+          @click="selectedType = type.value"
+          :class="[
+            'p-4 border rounded-lg text-center transition-colors',
+            selectedType === type.value
+              ? 'border-blue-500 bg-blue-50 text-blue-700'
+              : 'border-gray-300 bg-white text-gray-700 hover:bg-gray-50'
+          ]"
+        >
+          <div class="text-2xl mb-2">{{ type.emoji }}</div>
+          <div class="font-medium">{{ type.label }}</div>
+        </button>
+      </div>
+
       <form class="mt-8 space-y-6" @submit.prevent="handleLogin">
         <div class="rounded-md shadow-sm -space-y-px">
           <div>
@@ -53,6 +72,7 @@
           <div class="flex items-center">
             <input
               id="remember-me"
+              v-model="form.rememberMe"
               name="remember-me"
               type="checkbox"
               class="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
@@ -72,10 +92,32 @@
         <div>
           <button
             type="submit"
-            class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
+            :disabled="isLoading"
+            :class="[
+              'group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500 transition-colors',
+              isLoading ? 'bg-gray-400 cursor-not-allowed' : 'bg-blue-600 hover:bg-blue-700'
+            ]"
           >
-            Sign in
+            <span v-if="isLoading" class="flex items-center">
+              <svg class="animate-spin -ml-1 mr-3 h-5 w-5 text-white" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24">
+                <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                <path class="opacity-75" fill="currentColor" d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z"></path>
+              </svg>
+              Signing in...
+            </span>
+            <span v-else>
+              Sign in as {{ selectedTypeLabel }}
+            </span>
           </button>
+        </div>
+
+        <!-- Demo Credentials -->
+        <div class="bg-yellow-50 border border-yellow-200 rounded-lg p-4">
+          <h4 class="text-sm font-medium text-yellow-800 mb-2">Demo Credentials</h4>
+          <p class="text-xs text-yellow-700">
+            Email: any email<br>
+            Password: <strong>password</strong>
+          </p>
         </div>
 
         <!-- Sign Up Prompt -->
@@ -94,16 +136,50 @@
 
 <script setup>
 definePageMeta({
-  layout: 'default'
+  layout: 'default',
+  middleware: 'guest' // We'll create this middleware next
 })
 
+const { login, isLoading } = useAuth()
+
+const userTypes = [
+  { value: 'brand', label: 'Brand', emoji: '🏢' },
+  { value: 'influencer', label: 'Influencer', emoji: '⭐' },
+  { value: 'agency', label: 'Agency', emoji: '🏢' },
+  { value: 'admin', label: 'Admin', emoji: '👨‍💼' }
+]
+
+const selectedType = ref('brand')
 const form = ref({
   email: '',
-  password: ''
+  password: '',
+  rememberMe: false
 })
 
-const handleLogin = () => {
-  // TODO: Implement login logic
-  console.log('Login attempt:', form.value)
+const selectedTypeLabel = computed(() => {
+  const type = userTypes.find(t => t.value === selectedType.value)
+  return type?.label || 'User'
+})
+
+const handleLogin = async () => {
+  const result = await login(form.value.email, form.value.password, selectedType.value)
+  
+  if (result.success) {
+    // Redirect based on user type
+    const redirectPath = getRedirectPath(result.user.type)
+    navigateTo(redirectPath)
+  } else {
+    alert(`Login failed: ${result.error}`)
+  }
+}
+
+const getRedirectPath = (userType) => {
+  const paths = {
+    brand: '/brand/dashboard',
+    influencer: '/influencer/dashboard',
+    agency: '/agency/dashboard',
+    admin: '/admin/dashboard'
+  }
+  return paths[userType] || '/'
 }
 </script>
