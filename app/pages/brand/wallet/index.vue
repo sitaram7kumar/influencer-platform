@@ -252,7 +252,7 @@
 <script setup>
 definePageMeta({
   layout: 'brand',
-  middleware: 'auth',
+  middleware: 'auth-new', 
   requiredUserType: 'brand'
 })
 

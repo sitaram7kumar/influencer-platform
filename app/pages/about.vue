@@ -1,5 +1,30 @@
+<script setup>
+definePageMeta({
+  layout: 'default'
+})
+
+const authStore = useAuthStore()
+
+// Optional: You can add a small banner for logged-in users
+const isAuthenticated = computed(() => authStore.isAuthenticated)
+const userType = computed(() => authStore.getUserType())
+</script>
+
 <template>
   <div class="min-h-screen bg-white">
+    <!-- Show a small banner for logged-in users -->
+    <div v-if="isAuthenticated" class="bg-blue-50 border-b border-blue-200 py-2">
+      <div class="container mx-auto px-4 text-center">
+        <p class="text-sm text-blue-700">
+          👋 Hello {{ authStore.user?.name }}! 
+          <NuxtLink :to="getDashboardPath(userType)" class="font-semibold underline ml-2">
+            Go to Dashboard
+          </NuxtLink>
+        </p>
+      </div>
+    </div>
+    
+    <div class="min-h-screen bg-white">
     <div class="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
       <div class="text-center">
         <h1 class="text-4xl font-bold text-gray-900 mb-8">About InfluenceHub</h1>
@@ -35,10 +60,8 @@
       </div>
     </div>
   </div>
+    <div class="max-w-4xl mx-auto py-16 px-4 sm:px-6 lg:px-8">
+      <!-- ... -->
+    </div>
+  </div>
 </template>
-
-<script setup>
-definePageMeta({
-  layout: 'default'
-})
-</script>

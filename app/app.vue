@@ -7,10 +7,16 @@
 </template>
 
 <script setup>
-const { checkAuth } = useAuth()
+const authStore = useAuthStore()
 
-// Initialize auth state when app starts
+// Initialize auth immediately when app starts
 onMounted(() => {
-  checkAuth()
+  console.log('🚀 App mounted - initializing auth store...')
+  authStore.initializeAuth()
 })
+
+// Also initialize on client side
+if (process.client) {
+  authStore.initializeAuth()
+}
 </script>

@@ -3,8 +3,8 @@
     <div class="max-w-4xl mx-auto">
       <div class="bg-white rounded-lg shadow-sm p-6">
         <h1 class="text-2xl font-bold text-gray-900 mb-4">Agency Dashboard</h1>
-        <p class="text-gray-600">Welcome to your agency dashboard, {{ user?.name }}!</p>
-        <p class="text-gray-600 mt-2">This is a placeholder page for agency features.</p>
+        <p class="text-gray-600">Welcome to your agency dashboard, {{ authStore.user?.name }}!</p>
+        <p class="text-gray-600 mt-2">Agency features coming soon...</p>
       </div>
     </div>
   </div>
@@ -12,9 +12,9 @@
 
 <script setup>
 definePageMeta({
-  middleware: 'auth',
+  middleware: 'auth-new',
   requiredUserType: 'agency'
 })
 
-const { user } = useAuth()
+const authStore = useAuthStore()
 </script>

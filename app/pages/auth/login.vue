@@ -140,8 +140,9 @@ definePageMeta({
   middleware: 'guest'
 })
 
-const { login, isLoading } = useAuth()
+const authStore = useAuthStore()
 const router = useRouter()
+// const { login, isLoading } = useAuth()
 
 const userTypes = [
   { value: 'brand', label: 'Brand', emoji: '🏢' },
@@ -157,6 +158,14 @@ const form = ref({
   rememberMe: false
 })
 
+watch(selectedType, (newType) => {
+  const typeConfig = userTypes.find(t => t.value === newType)
+  if (typeConfig) {
+    form.value.email = typeConfig.email
+  }
+})
+
+
 const selectedTypeLabel = computed(() => {
   const type = userTypes.find(t => t.value === selectedType.value)
   return type?.label || 'User'
@@ -165,14 +174,12 @@ const selectedTypeLabel = computed(() => {
 const handleLogin = async () => {
   console.log('Login attempt:', form.value.email, selectedType.value)
   
-  const result = await login(form.value.email, form.value.password, selectedType.value)
+  const result = await authStore.login(form.value.email, form.value.password, selectedType.value)
   
   if (result.success) {
     console.log('Login successful, redirecting...')
-    // Use setTimeout to ensure state is updated before redirect
     setTimeout(() => {
       const redirectPath = getRedirectPath(result.user.type)
-      console.log('Redirecting to:', redirectPath)
       navigateTo(redirectPath)
     }, 100)
   } else {

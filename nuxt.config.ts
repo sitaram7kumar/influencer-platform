@@ -12,6 +12,7 @@ export default defineNuxtConfig({
     '@nuxt/eslint',
     '@nuxt/image',
     '@nuxt/ui',
-    '@pinia/nuxt'
+    '@pinia/nuxt',
+    '@pinia/nuxt',
   ]
 })

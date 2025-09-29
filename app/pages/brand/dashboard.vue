@@ -114,12 +114,13 @@
 <script setup>
 definePageMeta({
   layout: 'brand',
-  middleware: 'auth',
+  middleware: 'auth-new', 
   requiredUserType: 'brand'
 })
 
+const { user }  = useAuthStore()
 // Mock data
-const { user } = useAuth()
+// const { user } = useAuth()
 
 const recentCampaigns = ref([
   { id: 1, name: 'Summer Collection 2024', type: 'Instagram Reels', status: 'Active', budget: 2500, influencers: 12 },

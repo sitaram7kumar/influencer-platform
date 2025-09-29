@@ -22,7 +22,9 @@ export const useAuth = () => {
       type: 'influencer',
       avatar: null,
       followers: 125000,
-      platform: 'instagram'
+      platform: 'instagram',
+      engagement: 4.8,
+      category: 'fashion'
     },
     agency: {
       id: 3,
@@ -82,12 +84,11 @@ export const useAuth = () => {
       if (process.client) {
         localStorage.setItem('user', JSON.stringify(userData))
         localStorage.setItem('isAuthenticated', 'true')
+        console.log('✅ Auth state saved to localStorage')
       }
       
-      console.log('Login successful:', userData)
       return { success: true, user: userData }
     } catch (error) {
-      console.error('Login failed:', error)
       return { success: false, error: error.message }
     } finally {
       isLoading.value = false
@@ -134,28 +135,35 @@ export const useAuth = () => {
     if (process.client) {
       localStorage.removeItem('user')
       localStorage.removeItem('isAuthenticated')
+      console.log('✅ Auth state cleared from localStorage')
     }
     
     navigateTo('/')
   }
 
-  // Check if user is authenticated
+  // Check if user is authenticated - FIXED VERSION
   const checkAuth = () => {
     if (process.client) {
+      console.log('🔄 Checking auth state from localStorage...')
       const storedUser = localStorage.getItem('user')
       const storedAuth = localStorage.getItem('isAuthenticated')
+      
+      console.log('LocalStorage - user:', storedUser)
+      console.log('LocalStorage - isAuthenticated:', storedAuth)
       
       if (storedUser && storedAuth === 'true') {
         try {
           user.value = JSON.parse(storedUser)
           isAuthenticated.value = true
-          console.log('Auth restored:', user.value)
+          console.log('✅ Auth state restored from localStorage:', user.value)
         } catch (error) {
-          console.error('Error parsing stored user:', error)
+          console.error('❌ Error parsing stored user:', error)
           // Clear invalid data
           localStorage.removeItem('user')
           localStorage.removeItem('isAuthenticated')
         }
+      } else {
+        console.log('❌ No valid auth state found in localStorage')
       }
     }
   }
@@ -188,7 +196,7 @@ export const useAuth = () => {
     }
   }
 
-  // Initialize auth on composable creation
+  // Initialize auth on composable creation - CALL THIS
   if (process.client) {
     checkAuth()
   }

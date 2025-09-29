@@ -123,14 +123,14 @@
 <script setup>
 // Add auth protection to brand layout
 definePageMeta({
-  middleware: 'auth',
+  middleware: 'auth-new', 
   requiredUserType: 'brand'
 })
 
-const { user, logout } = useAuth()
+const { user, logout }  = useAuthStore()
 
 const userInitials = computed(() => {
-  return user.value?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'
+  return user?.value?.name?.split(' ').map(n => n[0]).join('').toUpperCase() || 'U'
 })
 
 const handleLogout = () => {
