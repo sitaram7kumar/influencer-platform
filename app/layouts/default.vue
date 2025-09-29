@@ -9,5 +9,5 @@
 </template>
 
 <script setup>
-// We'll add authentication logic here later
+// We'll handle auth state in the header component
 </script>

@@ -185,8 +185,12 @@
 
 <script setup>
 definePageMeta({
-  layout: 'brand'
+  layout: 'brand',
+  middleware: 'auth',
+  requiredUserType: 'brand'
 })
+
+const { user } = useAuth()
 
 // Use our campaigns composable
 const { 

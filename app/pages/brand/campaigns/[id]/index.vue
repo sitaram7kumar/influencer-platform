@@ -332,8 +332,12 @@
 
 <script setup>
 definePageMeta({
-  layout: 'brand'
+  layout: 'brand',
+  middleware: 'auth',
+  requiredUserType: 'brand'
 })
+
+const { user } = useAuth()
 
 // Get route parameters
 const route = useRoute()

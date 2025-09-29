@@ -223,8 +223,12 @@
 
 <script setup>
 definePageMeta({
-  layout: 'brand'
+  layout: 'brand',
+  middleware: 'auth',
+  requiredUserType: 'brand'
 })
+
+const { user } = useAuth()
 
 // Composables
 const { 

@@ -4,7 +4,7 @@ export const useAuth = () => {
   const isAuthenticated = ref(false)
   const isLoading = ref(false)
 
-  // Mock user data - in real app, this would come from API
+  // Mock user data
   const mockUsers = {
     brand: {
       id: 1,
@@ -47,42 +47,47 @@ export const useAuth = () => {
     
     try {
       // Simulate API call
-      await new Promise(resolve => setTimeout(resolve, 1500))
+      await new Promise(resolve => setTimeout(resolve, 1000))
       
       // Mock authentication logic
       let userData = null
       
       switch (userType) {
         case 'brand':
-          userData = mockUsers.brand
+          userData = { ...mockUsers.brand, email }
           break
         case 'influencer':
-          userData = mockUsers.influencer
+          userData = { ...mockUsers.influencer, email }
           break
         case 'agency':
-          userData = mockUsers.agency
+          userData = { ...mockUsers.agency, email }
           break
         case 'admin':
-          userData = mockUsers.admin
+          userData = { ...mockUsers.admin, email }
           break
         default:
           throw new Error('Invalid user type')
       }
       
-      // Mock password check (in real app, this would be server-side)
+      // Mock password check
       if (password !== 'password') {
         throw new Error('Invalid credentials')
       }
       
+      // Update state
       user.value = userData
       isAuthenticated.value = true
       
-      // Store in localStorage (in real app, use secure token)
-      localStorage.setItem('user', JSON.stringify(userData))
-      localStorage.setItem('isAuthenticated', 'true')
+      // Store in localStorage (client-side only)
+      if (process.client) {
+        localStorage.setItem('user', JSON.stringify(userData))
+        localStorage.setItem('isAuthenticated', 'true')
+      }
       
+      console.log('Login successful:', userData)
       return { success: true, user: userData }
     } catch (error) {
+      console.error('Login failed:', error)
       return { success: false, error: error.message }
     } finally {
       isLoading.value = false
@@ -108,8 +113,10 @@ export const useAuth = () => {
       isAuthenticated.value = true
       
       // Store in localStorage
-      localStorage.setItem('user', JSON.stringify(newUser))
-      localStorage.setItem('isAuthenticated', 'true')
+      if (process.client) {
+        localStorage.setItem('user', JSON.stringify(newUser))
+        localStorage.setItem('isAuthenticated', 'true')
+      }
       
       return { success: true, user: newUser }
     } catch (error) {
@@ -123,19 +130,33 @@ export const useAuth = () => {
   const logout = () => {
     user.value = null
     isAuthenticated.value = false
-    localStorage.removeItem('user')
-    localStorage.removeItem('isAuthenticated')
-    navigateTo('/auth/login')
+    
+    if (process.client) {
+      localStorage.removeItem('user')
+      localStorage.removeItem('isAuthenticated')
+    }
+    
+    navigateTo('/')
   }
 
   // Check if user is authenticated
   const checkAuth = () => {
-    const storedUser = localStorage.getItem('user')
-    const storedAuth = localStorage.getItem('isAuthenticated')
-    
-    if (storedUser && storedAuth === 'true') {
-      user.value = JSON.parse(storedUser)
-      isAuthenticated.value = true
+    if (process.client) {
+      const storedUser = localStorage.getItem('user')
+      const storedAuth = localStorage.getItem('isAuthenticated')
+      
+      if (storedUser && storedAuth === 'true') {
+        try {
+          user.value = JSON.parse(storedUser)
+          isAuthenticated.value = true
+          console.log('Auth restored:', user.value)
+        } catch (error) {
+          console.error('Error parsing stored user:', error)
+          // Clear invalid data
+          localStorage.removeItem('user')
+          localStorage.removeItem('isAuthenticated')
+        }
+      }
     }
   }
 
@@ -156,7 +177,10 @@ export const useAuth = () => {
       await new Promise(resolve => setTimeout(resolve, 1000))
       
       user.value = { ...user.value, ...updates }
-      localStorage.setItem('user', JSON.stringify(user.value))
+      
+      if (process.client) {
+        localStorage.setItem('user', JSON.stringify(user.value))
+      }
       
       return { success: true, user: user.value }
     } catch (error) {
@@ -164,10 +188,10 @@ export const useAuth = () => {
     }
   }
 
-  // Initialize auth state
-  onMounted(() => {
+  // Initialize auth on composable creation
+  if (process.client) {
     checkAuth()
-  })
+  }
 
   return {
     user,

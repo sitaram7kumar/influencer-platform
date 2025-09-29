@@ -137,10 +137,11 @@
 <script setup>
 definePageMeta({
   layout: 'default',
-  middleware: 'guest' // We'll create this middleware next
+  middleware: 'guest'
 })
 
 const { login, isLoading } = useAuth()
+const router = useRouter()
 
 const userTypes = [
   { value: 'brand', label: 'Brand', emoji: '🏢' },
@@ -151,8 +152,8 @@ const userTypes = [
 
 const selectedType = ref('brand')
 const form = ref({
-  email: '',
-  password: '',
+  email: 'nike@example.com', // Pre-fill for testing
+  password: 'password', // Pre-fill for testing
   rememberMe: false
 })
 
@@ -162,12 +163,18 @@ const selectedTypeLabel = computed(() => {
 })
 
 const handleLogin = async () => {
+  console.log('Login attempt:', form.value.email, selectedType.value)
+  
   const result = await login(form.value.email, form.value.password, selectedType.value)
   
   if (result.success) {
-    // Redirect based on user type
-    const redirectPath = getRedirectPath(result.user.type)
-    navigateTo(redirectPath)
+    console.log('Login successful, redirecting...')
+    // Use setTimeout to ensure state is updated before redirect
+    setTimeout(() => {
+      const redirectPath = getRedirectPath(result.user.type)
+      console.log('Redirecting to:', redirectPath)
+      navigateTo(redirectPath)
+    }, 100)
   } else {
     alert(`Login failed: ${result.error}`)
   }

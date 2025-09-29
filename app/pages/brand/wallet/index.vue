@@ -251,9 +251,12 @@
 
 <script setup>
 definePageMeta({
-  layout: 'brand'
+  layout: 'brand',
+  middleware: 'auth',
+  requiredUserType: 'brand'
 })
 
+const { user } = useAuth()
 // Composables
 const { wallet, transactionTypes, addFunds, withdrawFunds, getWalletStats } = useWallet()
 

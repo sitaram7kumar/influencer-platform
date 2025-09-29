@@ -338,8 +338,12 @@
 
 <script setup>
 definePageMeta({
-  layout: 'brand'
+  layout: 'brand',
+  middleware: 'auth',
+  requiredUserType: 'brand'
 })
+
+const { user } = useAuth()
 
 // Reactive profile data
 const profile = ref({
